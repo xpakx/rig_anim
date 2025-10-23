@@ -17,10 +17,10 @@ bones = [
     {"name": "root", "length": 0, "rotation": 0, "x": 400, "y": 300},
     {"name": "torso", "parent": "root", "length": 100, "rotation": -90},
     {"name": "head", "parent": "torso", "length": 40, "rotation": 0},
-    {"name": "left_arm", "parent": "torso", "length": 60, "rotation": 45},
-    {"name": "right_arm", "parent": "torso", "length": 60, "rotation": -45},
-    {"name": "left_leg", "parent": "root", "length": 80, "rotation": 120},
-    {"name": "right_leg", "parent": "root", "length": 80, "rotation": 60},
+    {"name": "left_arm", "parent": "torso", "length": 60, "rotation": 45, "x": 23, "y": 15},
+    {"name": "right_arm", "parent": "torso", "length": 60, "rotation": -45, "x": -23, "y": 15},
+    {"name": "left_leg", "parent": "root", "length": 80, "rotation": 120, "x": -20},
+    {"name": "right_leg", "parent": "root", "length": 80, "rotation": 60, "x": 20},
 ]
 
 bones_dict = {b["name"]: b for b in bones}
@@ -36,6 +36,8 @@ def get_world_pos(bone):
     if bone.get("parent"):
         parent = bones_dict[bone["parent"]]
         px, py, prot = get_world_pos(parent)
+        px += bone.get("x", 0)
+        py += bone.get("y", 0)
         rad = math.radians(prot + bone["rotation"])
         x = px + math.cos(rad) * bone["length"]
         y = py + math.sin(rad) * bone["length"]
@@ -45,7 +47,7 @@ def get_world_pos(bone):
 
 
 angle = 0
-show_attachments = False
+show_attachments = True
 
 while not window_should_close():
     begin_drawing()
@@ -60,9 +62,12 @@ while not window_should_close():
     for b in bones:
         if b.get("parent"):
             px, py, _ = get_world_pos(bones_dict[b["parent"]])
+            px += b.get("x", 0)
+            py += b.get("y", 0)
             x, y, _ = get_world_pos(b)
             draw_line(int(px), int(py), int(x), int(y), BLACK)
             draw_circle(int(x), int(y), 5, RED)
+            draw_circle(int(px), int(py), 5, RED)
         else:
             x, y, _ = get_world_pos(b)
             draw_circle(int(x), int(y), 5, BLUE)
@@ -71,6 +76,8 @@ while not window_should_close():
             offset = 90 if b['name'] in ['head', 'torso'] else -90
             x, y, rot = get_world_pos(b)
             px, py, _ = get_world_pos(bones_dict[b["parent"]])
+            px += b.get("x", 0)
+            py += b.get("y", 0)
             tex = b["texture"]
             scale_y = b["length"] / tex.height if tex.height != 0 else 1
             if b['name'] in ['head', 'torso']:
