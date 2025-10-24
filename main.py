@@ -25,11 +25,20 @@ bones = [
 
 bones_dict = {b["name"]: b for b in bones}
 
-for bone in bones:
+slots = [
+    {"name": "head_slot", "bone": "head", "attachment": "head"},
+    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
+    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
+    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
+    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
+    {"name": "torso_slot", "bone": "torso", "attachment": "torso"},
+]
+
+for slot in slots:
     try:
-        bone["texture"] = load_texture(f"files/{bone['name']}.png")
+        slot["texture"] = load_texture(f"files/{slot['attachment']}.png")
     except Exception:
-        bone["texture"] = None
+        slot["texture"] = None
 
 
 def bone_local_matrix(bone):
@@ -85,18 +94,10 @@ def bone_world_matrix(bone):
 
 angle = 0
 show_attachments = True
+show_bones = True
 
-while not window_should_close():
-    begin_drawing()
-    clear_background(RAYWHITE)
 
-    bones_dict["left_arm"]["rotation"] = -45 + math.sin(angle) * 30
-    bones_dict["right_arm"]["rotation"] = 45 - math.sin(angle) * 30
-    bones_dict["left_leg"]["rotation"] = 120 - math.sin(angle) * 20
-    bones_dict["right_leg"]["rotation"] = 60 + math.sin(angle) * 20
-    bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
-    angle += 0.05
-
+def draw_bones():
     for bone in bones:
         if bone.get("parent"):
             wm = bone_world_matrix(bone)
@@ -109,30 +110,52 @@ while not window_should_close():
             draw_circle(int(x), int(y), 4, RED)
             draw_circle(int(x_tip), int(y_tip), 4, RED)
 
-            # TODO: attachments needs origin point defined to work better
-            if show_attachments and bone.get("texture"):
-                tex = bone["texture"]
-                a, b, c, d, tx, ty = wm
-
-                px = a * b + tx
-                py = c * d + ty
-
-                rot = math.degrees(math.atan2(c, a)) - 90
-                scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
-                if bone['name'] in ['head', 'torso']:
-                    rot += 180
-                    py -= tex.height * scale_y
-                    px -= tex.width/2 * scale_y
-                elif bone['name'].endswith('leg'):
-                    px -= tex.width/2 * scale_y
-                elif bone['name'].endswith('arm'):
-                    px += tex.width/2 * scale_y
-
-                draw_texture_ex(tex, Vector2(px, py), rot, scale_y, RAYWHITE)
-
     root = bones_dict["root"]
     m = bone_local_matrix(root)
     draw_circle(int(m[4]), int(m[5]), 5, BLUE)
+
+
+def draw_attachments():
+    for slot in slots:
+        if slot.get("texture"):
+            bone = bones_dict.get(slot.get("bone"))
+            if not bone:
+                continue
+            tex = slot["texture"]
+            wm = bone_world_matrix(bone)
+            a, b, c, d, x, y = wm
+            rot = math.degrees(math.atan2(c, a)) - 90
+
+            scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
+            if bone['name'] in ['head', 'torso']:
+                rot += 180
+                y -= tex.height * scale_y
+                x -= tex.width/2 * scale_y
+            elif bone['name'].endswith('leg'):
+                x -= tex.width/2 * scale_y
+            elif bone['name'].endswith('arm'):
+                x += tex.width/2 * scale_y
+
+            draw_texture_ex(tex, Vector2(x, y), rot, scale_y, RAYWHITE)
+
+
+while not window_should_close():
+    begin_drawing()
+    clear_background(RAYWHITE)
+
+    bones_dict["left_arm"]["rotation"] = -45 + math.sin(angle) * 30
+    bones_dict["right_arm"]["rotation"] = 45 - math.sin(angle) * 30
+    bones_dict["left_leg"]["rotation"] = 120 - math.sin(angle) * 20
+    bones_dict["right_leg"]["rotation"] = 60 + math.sin(angle) * 20
+    bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
+    angle += 0.05
+
+    # TODO: attachments needs origin point defined to work better
+    if show_attachments:
+        draw_attachments()
+
+    if show_bones:
+        draw_bones()
 
     end_drawing()
 
