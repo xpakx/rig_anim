@@ -105,6 +105,10 @@ KEY_6 = 54
 KEY_7 = 55
 KEY_8 = 56
 KEY_9 = 57
+KEY_SPACE = 32
+KEY_B = 66
+KEY_A = 65
+
 
 
 

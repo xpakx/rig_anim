@@ -2,10 +2,11 @@ from raylib import (
         init_window, set_target_fps, window_should_close,
         begin_drawing, clear_background, draw_line,
         draw_circle, end_drawing, close_window,
-        load_texture, draw_texture_ex, unload_texture,
-        draw_texture_pro,
+        load_texture, unload_texture, draw_texture_pro,
+        is_key_pressed,
         Vector2, Rectangle,
-        RAYWHITE, BLACK, RED, BLUE, GREEN
+        RAYWHITE, BLACK, RED, BLUE,
+        KEY_A, KEY_B
 )
 import math
 
@@ -28,12 +29,12 @@ bones_dict = {b["name"]: b for b in bones}
 
 # TODO: blend mode
 slots = [
-    {"name": "head_slot", "bone": "head", "attachment": "head", "color": RED},
-    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg", "color": GREEN},
-    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg", "color": GREEN},
-    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm", "color": GREEN},
-    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm", "color": GREEN},
-    {"name": "torso_slot", "bone": "torso", "attachment": "torso", "color": BLUE},
+    {"name": "head_slot", "bone": "head", "attachment": "head"},
+    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
+    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
+    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
+    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
+    {"name": "torso_slot", "bone": "torso", "attachment": "torso", "color": RED},
 ]
 
 attachments = [
@@ -141,6 +142,9 @@ def draw_attachments():
             if not att:
                 continue
             tex = att["texture"]
+            if not tex:
+                continue
+
             wm = bone_world_matrix(bone)
             a, b, c, d, x, y = wm
             rot = math.degrees(math.atan2(c, a)) - 90
@@ -182,10 +186,16 @@ while not window_should_close():
     if show_bones:
         draw_bones()
 
+    if is_key_pressed(KEY_A):
+        show_attachments = not show_attachments
+    if is_key_pressed(KEY_B):
+        show_bones = not show_bones
+
     end_drawing()
 
-for bone in bones:
-    if bone.get("texture"):
-        unload_texture(bone['texture'])
+for att in att_dict.values():
+    tex = att.get("texture")
+    if tex:
+        unload_texture(tex)
 
 close_window()
