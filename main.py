@@ -3,8 +3,9 @@ from raylib import (
         begin_drawing, clear_background, draw_line,
         draw_circle, end_drawing, close_window,
         load_texture, draw_texture_ex, unload_texture,
-        Vector2,
-        RAYWHITE, BLACK, RED, BLUE
+        draw_texture_pro,
+        Vector2, Rectangle,
+        RAYWHITE, BLACK, RED, BLUE, GREEN
 )
 import math
 
@@ -17,10 +18,10 @@ bones = [
     {"name": "root", "length": 0, "rotation": 0, "x": 400, "y": 350},
     {"name": "torso", "parent": "root", "length": 200, "rotation": -90},
     {"name": "head", "parent": "torso", "length": 80, "rotation": 0},
-    {"name": "left_arm", "parent": "torso", "length": 120, "rotation": -45, "x": -30, "y": -46},
-    {"name": "right_arm", "parent": "torso", "length": 120, "rotation": 45, "x": -30, "y": 46},
-    {"name": "left_leg", "parent": "root", "length": 160, "rotation": 120, "x": -40},
-    {"name": "right_leg", "parent": "root", "length": 160, "rotation": 60, "x": 40},
+    {"name": "left_arm", "parent": "torso", "length": 120, "rotation": -45, "x": -50, "y": -46},
+    {"name": "right_arm", "parent": "torso", "length": 120, "rotation": 45, "x": -50, "y": 46},
+    {"name": "left_leg", "parent": "root", "length": 160, "rotation": 120, "x": -30},
+    {"name": "right_leg", "parent": "root", "length": 160, "rotation": 60, "x": 30},
 ]
 
 bones_dict = {b["name"]: b for b in bones}
@@ -28,18 +29,32 @@ bones_dict = {b["name"]: b for b in bones}
 # TODO: blend mode
 slots = [
     {"name": "head_slot", "bone": "head", "attachment": "head", "color": RED},
-    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
-    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
-    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
-    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
+    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg", "color": GREEN},
+    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg", "color": GREEN},
+    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm", "color": GREEN},
+    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm", "color": GREEN},
     {"name": "torso_slot", "bone": "torso", "attachment": "torso", "color": BLUE},
 ]
 
-for slot in slots:
+attachments = [
+    {"name": "head", "texture": "head.png", "x": 30, "y": 45,
+     "rotation": 180, "scaleX": 1.05, "scaleY": 1.05},
+    {"name": "torso", "texture": "torso.png", "x": 64, "y": 180,
+     "rotation": 180, "scaleX": 0.83},
+    {"name": "left_arm", "texture": "left_arm.png", "x": 25},
+    {"name": "right_arm", "texture": "right_arm.png", "x": 20},
+    {"name": "left_leg", "texture": "left_leg.png", "x": 25, "y": 25},
+    {"name": "right_leg", "texture": "right_leg.png", "x": 25, "y": 25},
+]
+
+att_dict = {a["name"]: a for a in attachments}
+
+for key in att_dict:
+    att = att_dict[key]
     try:
-        slot["texture"] = load_texture(f"files/{slot['attachment']}.png")
+        att["texture"] = load_texture(f"files/{att['texture']}")
     except Exception:
-        slot["texture"] = None
+        att["texture"] = None
 
 
 def bone_local_matrix(bone):
@@ -118,42 +133,49 @@ def draw_bones():
 
 def draw_attachments():
     for slot in slots:
-        if slot.get("texture"):
+        if slot.get("attachment"):
             bone = bones_dict.get(slot.get("bone"))
             if not bone:
                 continue
-            tex = slot["texture"]
+            att = att_dict.get(slot.get("attachment"))
+            if not att:
+                continue
+            tex = att["texture"]
             wm = bone_world_matrix(bone)
             a, b, c, d, x, y = wm
             rot = math.degrees(math.atan2(c, a)) - 90
 
             scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
-            if bone['name'] in ['head', 'torso']:
-                rot += 180
-                y -= tex.height * scale_y
-                x -= tex.width/2 * scale_y
-            elif bone['name'].endswith('leg'):
-                x -= tex.width/2 * scale_y
-            elif bone['name'].endswith('arm'):
-                x += tex.width/2 * scale_y
-
             color = slot.get('color', RAYWHITE)
 
-            draw_texture_ex(tex, Vector2(x, y), rot, scale_y, color)
+            src = Rectangle(0, 0, tex.width, tex.height)
+
+            dest = Rectangle(
+                x, y,
+                tex.width * scale_y * att.get("scaleX", 1),
+                tex.height * scale_y * att.get("scaleY", 1)
+            )
+
+            origin = Vector2(
+                att.get('x', 0),
+                att.get('y', 0)
+            )
+            att_rot = att.get('rotation', 0)
+
+            draw_texture_pro(tex, src, dest, origin, rot + att_rot, color)
 
 
 while not window_should_close():
     begin_drawing()
     clear_background(RAYWHITE)
 
-    bones_dict["left_arm"]["rotation"] = -45 + math.sin(angle) * 30
-    bones_dict["right_arm"]["rotation"] = 45 - math.sin(angle) * 30
-    bones_dict["left_leg"]["rotation"] = 120 - math.sin(angle) * 20
-    bones_dict["right_leg"]["rotation"] = 60 + math.sin(angle) * 20
+    bones_dict["left_arm"]["rotation"] = -105 + math.sin(angle) * 30
+    bones_dict["right_arm"]["rotation"] = 105 - math.sin(angle) * 30
+    bones_dict["left_leg"]["rotation"] = 100 - math.sin(angle) * 20
+    bones_dict["right_leg"]["rotation"] = 80 + math.sin(angle) * 20
     bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
     angle += 0.05
 
-    # TODO: attachments needs origin point defined to work better
     if show_attachments:
         draw_attachments()
 
