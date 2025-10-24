@@ -25,13 +25,14 @@ bones = [
 
 bones_dict = {b["name"]: b for b in bones}
 
+# TODO: blend mode
 slots = [
-    {"name": "head_slot", "bone": "head", "attachment": "head"},
+    {"name": "head_slot", "bone": "head", "attachment": "head", "color": RED},
     {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
     {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
     {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
     {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
-    {"name": "torso_slot", "bone": "torso", "attachment": "torso"},
+    {"name": "torso_slot", "bone": "torso", "attachment": "torso", "color": BLUE},
 ]
 
 for slot in slots:
@@ -136,7 +137,9 @@ def draw_attachments():
             elif bone['name'].endswith('arm'):
                 x += tex.width/2 * scale_y
 
-            draw_texture_ex(tex, Vector2(x, y), rot, scale_y, RAYWHITE)
+            color = slot.get('color', RAYWHITE)
+
+            draw_texture_ex(tex, Vector2(x, y), rot, scale_y, color)
 
 
 while not window_should_close():
