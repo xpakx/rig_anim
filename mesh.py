@@ -1,3 +1,4 @@
+import math
 from raylib import (
         init_window, set_target_fps, window_should_close,
         begin_drawing, clear_background, draw_circle,
@@ -23,26 +24,54 @@ triangles = [
     (0, 3, 2)
 ]
 
+vertex_weights = [
+    {'x': 1.0, 'y': 0.5},
+    {'x': 0.8, 'y': 0.2},
+    {'x': 0.8, 'y': 0.2},
+    {'x': 1.0, 'y': 0.5},
+]
 
+param_x = 0
+param_y = 0
+
+
+def deform_mesh(vertices, t, weights):
+    new_vertices = []
+    for i, ((x, y), w) in enumerate(zip(vertices, weights)):
+        phase = i % 2 * 0.5 + 2
+        offset = math.sin(t + phase) * 30
+        nx = x + offset * w['x']
+        ny = y + offset * w['y']
+        new_vertices.append([nx, ny])
+    return new_vertices
+
+
+t = 0
 while not window_should_close():
+    t += 0.05
+    param_x = math.sin(t)
+    param_y = math.cos(t)
+
+    deformed_vertices = deform_mesh(vertices, t, vertex_weights)
+
     begin_drawing()
     clear_background(WHITE)
     draw_text("Simple Mesh Deformation", 10, 10, 20, BLACK)
 
     for tri in triangles:
-        v1, v2, v3 = [vertices[i] for i in tri]
+        v1, v2, v3 = [deformed_vertices[i] for i in tri]
         draw_triangle(Vector2(v1[0], v1[1]),
                       Vector2(v2[0], v2[1]),
                       Vector2(v3[0], v3[1]),
                       RED)
 
     for tri in triangles:
-        v1, v2, v3 = [vertices[i] for i in tri]
+        v1, v2, v3 = [deformed_vertices[i] for i in tri]
         draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), BLUE)
         draw_line(int(v2[0]), int(v2[1]), int(v3[0]), int(v3[1]), BLUE)
         draw_line(int(v3[0]), int(v3[1]), int(v1[0]), int(v1[1]), BLUE)
 
-    for vx, vy in vertices:
+    for vx, vy in deformed_vertices:
         draw_circle(int(vx), int(vy), 5, BLUE)
 
     end_drawing()
