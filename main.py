@@ -3,9 +3,11 @@ from raylib import (
         begin_drawing, clear_background, draw_line,
         draw_circle, end_drawing, close_window,
         load_texture, unload_texture, draw_texture_pro,
-        is_key_pressed,
+        is_key_pressed, draw_text,
         Vector2, Rectangle,
-        RAYWHITE, BLACK, RED, BLUE,
+        RAYWHITE,
+        MOCHA_MANTLE, MOCHA_TEXT, MOCHA_OVERLAY_0,
+        RED, MOCHA_FLAMINGO,
         KEY_A, KEY_B
 )
 import math
@@ -17,31 +19,31 @@ set_target_fps(60)
 
 bones = [
     {"name": "root", "length": 0, "rotation": 0, "x": 400, "y": 350},
-    {"name": "torso", "parent": "root", "length": 200, "rotation": -90},
+    {"name": "torso", "parent": "root", "length": 120, "rotation": -90},
     {"name": "head", "parent": "torso", "length": 80, "rotation": 0},
-    {"name": "left_arm", "parent": "torso", "length": 120, "rotation": -45, "x": -50, "y": -46},
-    {"name": "right_arm", "parent": "torso", "length": 120, "rotation": 45, "x": -50, "y": 46},
-    {"name": "left_leg", "parent": "root", "length": 160, "rotation": 120, "x": -30},
-    {"name": "right_leg", "parent": "root", "length": 160, "rotation": 60, "x": 30},
+    {"name": "left_arm", "parent": "torso", "length": 100, "rotation": -45, "x": -50, "y": -46},
+    {"name": "right_arm", "parent": "torso", "length": 100, "rotation": 45, "x": -50, "y": 46},
+    {"name": "left_leg", "parent": "root", "length": 120, "rotation": 120, "x": -40},
+    {"name": "right_leg", "parent": "root", "length": 120, "rotation": 60, "x": 40},
 ]
 
 bones_dict = {b["name"]: b for b in bones}
 
 # TODO: blend mode
 slots = [
-    {"name": "head_slot", "bone": "head", "attachment": "head"},
+    {"name": "torso_slot", "bone": "torso", "attachment": "torso"},
     {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
     {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
     {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
     {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
-    {"name": "torso_slot", "bone": "torso", "attachment": "torso", "color": RED},
+    {"name": "head_slot", "bone": "head", "attachment": "head"},
 ]
 
 attachments = [
-    {"name": "head", "texture": "head.png", "x": 30, "y": 45,
-     "rotation": 180, "scaleX": 1.05, "scaleY": 1.05},
-    {"name": "torso", "texture": "torso.png", "x": 64, "y": 180,
-     "rotation": 180, "scaleX": 0.83},
+    {"name": "head", "texture": "head.png", "x": 70, "y": 70,
+     "rotation": 180, "scaleX": 1.45, "scaleY": 1.45},
+    {"name": "torso", "texture": "torso.png", "x": 60, "y": 110,
+     "rotation": 180},
     {"name": "left_arm", "texture": "left_arm.png", "x": 25},
     {"name": "right_arm", "texture": "right_arm.png", "x": 20},
     {"name": "left_leg", "texture": "left_leg.png", "x": 25, "y": 25},
@@ -123,13 +125,13 @@ def draw_bones():
             x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + wm[4]
             y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + wm[5]
 
-            draw_line(int(x), int(y), int(x_tip), int(y_tip), BLACK)
-            draw_circle(int(x), int(y), 4, RED)
-            draw_circle(int(x_tip), int(y_tip), 4, RED)
+            draw_line(int(x), int(y), int(x_tip), int(y_tip), MOCHA_TEXT)
+            draw_circle(int(x), int(y), 4, MOCHA_FLAMINGO)
+            draw_circle(int(x_tip), int(y_tip), 4, MOCHA_FLAMINGO)
 
     root = bones_dict["root"]
     m = bone_local_matrix(root)
-    draw_circle(int(m[4]), int(m[5]), 5, BLUE)
+    draw_circle(int(m[4]), int(m[5]), 5, MOCHA_OVERLAY_0)
 
 
 def draw_attachments():
@@ -171,13 +173,16 @@ def draw_attachments():
 
 while not window_should_close():
     begin_drawing()
-    clear_background(RAYWHITE)
+    clear_background(MOCHA_MANTLE)
+    draw_text("Rig-based animation", 10, 10, 20, MOCHA_TEXT)
 
     bones_dict["left_arm"]["rotation"] = -105 + math.sin(angle) * 30
     bones_dict["right_arm"]["rotation"] = 105 - math.sin(angle) * 30
     bones_dict["left_leg"]["rotation"] = 100 - math.sin(angle) * 20
     bones_dict["right_leg"]["rotation"] = 80 + math.sin(angle) * 20
     bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
+    bones_dict["root"]["x"] = 400 + math.sin(angle/2) * 50
+    bones_dict["head"]["rotation"] = 0 + math.sin(-angle) * 5
     angle += 0.05
 
     if show_attachments:

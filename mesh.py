@@ -4,10 +4,11 @@ from raylib import (
         begin_drawing, clear_background, draw_circle,
         end_drawing, close_window, draw_triangle,
         draw_text, draw_line, load_texture, unload_texture,
-        rl_begin, rl_end, rl_set_texture, rl_vertex_2f,
-        rl_tex_coord_2f, rl_color_4ub,
+        draw_texture_mesh, is_key_pressed,
         Vector2,
-        WHITE, BLACK, RED, BLUE, RL_TRIANGLES,
+        MOCHA_MANTLE, MOCHA_FLAMINGO, MOCHA_OVERLAY_0,
+        MOCHA_TEXT,
+        KEY_A, KEY_B, KEY_C, KEY_1,
 )
 
 init_window(800, 600, "Simplest Mesh")
@@ -59,6 +60,9 @@ def deform_mesh(vertices, t, weights):
 
 texture = load_texture("files/square.png")
 
+show_triangles = False
+show_edges = False
+show_texture = True
 t = 0
 while not window_should_close():
     t += 0.05
@@ -68,36 +72,37 @@ while not window_should_close():
     deformed_vertices = deform_mesh(vertices, t, vertex_weights)
 
     begin_drawing()
-    clear_background(WHITE)
-    draw_text("Simple Mesh Deformation", 10, 10, 20, BLACK)
+    clear_background(MOCHA_MANTLE)
+    draw_text("Simple Mesh Deformation", 10, 10, 20, MOCHA_TEXT)
 
-    for tri in triangles:
-        v1, v2, v3 = [deformed_vertices[i] for i in tri]
-        draw_triangle(Vector2(v1[0], v1[1]),
-                      Vector2(v2[0], v2[1]),
-                      Vector2(v3[0], v3[1]),
-                      RED)
+    if show_triangles:
+        for tri in triangles:
+            v1, v2, v3 = [deformed_vertices[i] for i in tri]
+            draw_triangle(Vector2(v1[0], v1[1]),
+                          Vector2(v2[0], v2[1]),
+                          Vector2(v3[0], v3[1]),
+                          MOCHA_FLAMINGO)
 
-    rl_begin(RL_TRIANGLES)
-    rl_set_texture(texture.id)
-    rl_color_4ub(255, 255, 255, 255)
-    for tri in triangles:
-        for i in tri:
-            x, y = deformed_vertices[i]
-            u, v = uvs[i]
-            rl_tex_coord_2f(u, v)
-            rl_vertex_2f(x, y)
-    rl_end()
-    rl_set_texture(0)
+    if show_texture:
+        draw_texture_mesh(texture, triangles, uvs, deformed_vertices)
 
-    for tri in triangles:
-        v1, v2, v3 = [deformed_vertices[i] for i in tri]
-        draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), BLUE)
-        draw_line(int(v2[0]), int(v2[1]), int(v3[0]), int(v3[1]), BLUE)
-        draw_line(int(v3[0]), int(v3[1]), int(v1[0]), int(v1[1]), BLUE)
+    if show_edges:
+        for tri in triangles:
+            v1, v2, v3 = [deformed_vertices[i] for i in tri]
+            draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), MOCHA_OVERLAY_0)
+            draw_line(int(v2[0]), int(v2[1]), int(v3[0]), int(v3[1]), MOCHA_OVERLAY_0)
+            draw_line(int(v3[0]), int(v3[1]), int(v1[0]), int(v1[1]), MOCHA_OVERLAY_0)
 
-    for vx, vy in deformed_vertices:
-        draw_circle(int(vx), int(vy), 5, BLUE)
+        for vx, vy in deformed_vertices:
+            draw_circle(int(vx), int(vy), 5, MOCHA_OVERLAY_0)
+
+    if is_key_pressed(KEY_A):
+        show_texture = not show_texture
+    if is_key_pressed(KEY_B):
+        show_edges = not show_edges
+    if is_key_pressed(KEY_1):
+        show_triangles = not show_triangles
+
 
     end_drawing()
 

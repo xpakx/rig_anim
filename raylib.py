@@ -132,10 +132,18 @@ KEY_7 = 55
 KEY_8 = 56
 KEY_9 = 57
 KEY_SPACE = 32
-KEY_B = 66
 KEY_A = 65
+KEY_B = 66
+KEY_C = 67
 
 
+# Catppuccin
+MOCHA_CRUST = 0xFF1B1111
+MOCHA_MANTLE = 0xFF251818
+
+MOCHA_FLAMINGO = 0xFFCDCDF2
+MOCHA_OVERLAY_0 = 0xFF86706C
+MOCHA_TEXT = 0xFFF4D6CD
 
 
 def init_window(width: int, height: int, name: str) -> None:
@@ -226,3 +234,22 @@ def rl_set_texture(id: int) -> None:
 
 def rl_color_4ub(r: int, g: int, b: int, a: int) -> None:
     raylib.rlColor4ub(r, g, b, a)
+
+
+def draw_texture_mesh(
+        texture: Texture2D,
+        triangles: list,
+        norm_vertices_src: list,
+        vertices_dest: list
+) -> None:
+    rl_begin(RL_TRIANGLES)
+    rl_set_texture(texture.id)
+    rl_color_4ub(255, 255, 255, 255)
+    for tri in triangles:
+        for i in tri:
+            x, y = vertices_dest[i]
+            u, v = norm_vertices_src[i]
+            rl_tex_coord_2f(u, v)
+            rl_vertex_2f(x, y)
+    rl_end()
+    rl_set_texture(0)
