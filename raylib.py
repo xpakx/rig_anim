@@ -83,8 +83,8 @@ raylib.DrawCircle.restype = None
 raylib.DrawLine.argtypes = [ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_int, ctypes.c_uint]
 raylib.DrawLine.restype = None
 
-
-
+raylib.DrawTriangle.argtypes = [Vector2, Vector2, Vector2, ctypes.c_uint]
+raylib.DrawTriangle.restype = None
 
 # Constants
 RAYWHITE = 0xFFFFFFFF
@@ -172,3 +172,6 @@ def draw_circle(x, y, r, color):
 
 def draw_line(x, y, x2, y2, color):
     raylib.DrawLine(x, y, x2, y2, color)
+
+def draw_triangle(v1: Vector2, v2: Vector2, v3: Vector2, color):
+    raylib.DrawTriangle(v1, v2, v3, color)
