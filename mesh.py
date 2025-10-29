@@ -3,21 +3,32 @@ from raylib import (
         init_window, set_target_fps, window_should_close,
         begin_drawing, clear_background, draw_circle,
         end_drawing, close_window, draw_triangle,
-        draw_text, draw_line,
+        draw_text, draw_line, load_texture, unload_texture,
+        rl_begin, rl_end, rl_set_texture, rl_vertex_2f,
+        rl_tex_coord_2f, rl_color_4ub,
         Vector2,
-        WHITE, BLACK, RED, BLUE,
+        WHITE, BLACK, RED, BLUE, RL_TRIANGLES,
 )
 
 init_window(800, 600, "Simplest Mesh")
 set_target_fps(60)
 
 
-vertices = [
-    [250, 150],  # top-left
-    [550, 150],  # top-right
-    [550, 450],  # bottom-right
-    [250, 450],  # bottom-left
+vertices = []
+
+uvs = [
+    [0, 0],  # top-left
+    [1, 0],  # top-right
+    [1, 1],  # bottom-right
+    [0, 1],  # bottom-left
 ]
+
+x = 250
+y = 150
+for uv in uvs:
+    vertice = [uv[0]*300 + x, uv[1]*300 + y]
+    vertices.append(vertice)
+
 
 triangles = [
     (0, 2, 1),
@@ -46,6 +57,8 @@ def deform_mesh(vertices, t, weights):
     return new_vertices
 
 
+texture = load_texture("files/square.png")
+
 t = 0
 while not window_should_close():
     t += 0.05
@@ -65,6 +78,18 @@ while not window_should_close():
                       Vector2(v3[0], v3[1]),
                       RED)
 
+    rl_begin(RL_TRIANGLES)
+    rl_set_texture(texture.id)
+    rl_color_4ub(255, 255, 255, 255)
+    for tri in triangles:
+        for i in tri:
+            x, y = deformed_vertices[i]
+            u, v = uvs[i]
+            rl_tex_coord_2f(u, v)
+            rl_vertex_2f(x, y)
+    rl_end()
+    rl_set_texture(0)
+
     for tri in triangles:
         v1, v2, v3 = [deformed_vertices[i] for i in tri]
         draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), BLUE)
@@ -76,4 +101,5 @@ while not window_should_close():
 
     end_drawing()
 
+unload_texture(texture)
 close_window()
