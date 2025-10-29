@@ -86,6 +86,32 @@ raylib.DrawLine.restype = None
 raylib.DrawTriangle.argtypes = [Vector2, Vector2, Vector2, ctypes.c_uint]
 raylib.DrawTriangle.restype = None
 
+raylib.DrawTextureRec.argtypes = [Texture2D, Rectangle, Vector2, ctypes.c_uint]
+raylib.DrawTextureRec.restype = None
+
+
+raylib.rlBegin.argtypes = [ctypes.c_int]
+raylib.rlBegin.restype = None
+
+raylib.rlVertex2f.argtypes = [ctypes.c_float, ctypes.c_float]
+raylib.rlVertex2f.restype = None
+
+raylib.rlTexCoord2f.argtypes = [ctypes.c_float, ctypes.c_float]
+raylib.rlTexCoord2f.restype = None
+
+raylib.rlEnd.argtypes = []
+raylib.rlEnd.restype = None
+
+raylib.rlSetTexture.argtypes = [ctypes.c_uint]  # texture id
+raylib.rlSetTexture.restype = None
+
+raylib.rlColor4ub.argtypes = [ctypes.c_uint, ctypes.c_uint, ctypes.c_uint, ctypes.c_uint]
+raylib.rlColor4ub.restype = None
+
+# Constants from Raylib
+RL_TRIANGLES = 4
+
+
 # Constants
 RAYWHITE = 0xFFFFFFFF
 BLACK = 0xFF000000
@@ -175,3 +201,28 @@ def draw_line(x, y, x2, y2, color):
 
 def draw_triangle(v1: Vector2, v2: Vector2, v3: Vector2, color):
     raylib.DrawTriangle(v1, v2, v3, color)
+
+
+def draw_texture_rec(texture: Texture2D, rect: Rectangle, vec: Vector2, color: int) -> None:
+    raylib.DrawTextureRec(texture, rect, vec, color)
+
+
+
+def rl_begin(a: int) -> None:
+    raylib.rlBegin(a)
+
+def rl_vertex_2f(x: float, y: float) -> None:
+    raylib.rlVertex2f(x, y)
+
+def rl_tex_coord_2f(x: float, y: float) -> None:
+    raylib.rlTexCoord2f(x, y)
+
+def rl_end() -> None:
+    raylib.rlEnd()
+
+def rl_set_texture(id: int) -> None:
+    raylib.rlSetTexture(id)
+
+
+def rl_color_4ub(r: int, g: int, b: int, a: int) -> None:
+    raylib.rlColor4ub(r, g, b, a)
