@@ -3,7 +3,7 @@
 run: rigmesh
 
 rig:
-	python main.py
+	python rig.py
 
 mesh:
 	python mesh.py
