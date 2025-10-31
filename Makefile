@@ -1,10 +1,13 @@
-.PHONY: run rig mesh
+.PHONY: run rig mesh rigmesh
 
-run:
-	python main.py
+run: rigmesh
 
 rig:
 	python main.py
 
 mesh:
 	python mesh.py
+
+rigmesh:
+	python rigmesh.py
+
