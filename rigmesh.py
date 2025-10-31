@@ -37,7 +37,8 @@ while not window_should_close():
     rig_model.bones_dict["head"]["rotation"] = 0 + math.sin(-angle) * 20
     angle += 0.05
 
-    draw_attachments(rig_model, deform)
+    if show_attachments:
+        draw_attachments(rig_model, deform)
 
     if show_bones:
         draw_bones(rig_model)

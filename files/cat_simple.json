@@ -1,0 +1,32 @@
+{
+	"bones": [
+    {"name": "root", "length": 0, "rotation": 0, "x": 400, "y": 350},
+    {"name": "torso", "parent": "root", "length": 120, "rotation": -90},
+    {"name": "head", "parent": "torso", "length": 80, "rotation": 0},
+    {"name": "left_arm", "parent": "torso", "length": 100, "rotation": -45, "x": -50, "y": -46},
+    {"name": "right_arm", "parent": "torso", "length": 100, "rotation": 45, "x": -50, "y": 46},
+    {"name": "left_leg", "parent": "root", "length": 120, "rotation": 120, "x": -40},
+    {"name": "right_leg", "parent": "root", "length": 120, "rotation": 60, "x": 40}
+],
+
+"slots": [
+    {"name": "torso_slot", "bone": "torso", "attachment": "torso"},
+    {"name": "lleg_slot", "bone": "left_leg", "attachment": "left_leg"},
+    {"name": "rleg_slot", "bone": "right_leg", "attachment": "right_leg"},
+    {"name": "larm_slot", "bone": "left_arm", "attachment": "left_arm"},
+    {"name": "rarm_slot", "bone": "right_arm", "attachment": "right_arm"},
+    {"name": "head_slot", "bone": "head", "attachment": "head"}
+],
+
+"attachments": [
+    {"name": "head", "texture": "head.png", "x": 70, "y": 70,
+     "rotation": 180, "scaleX": 1.45, "scaleY": 1.45},
+    {"name": "torso", "texture": "torso.png", "x": 60, "y": 110,
+     "rotation": 180},
+    {"name": "left_arm", "texture": "left_arm.png", "x": 25},
+    {"name": "right_arm", "texture": "right_arm.png", "x": 20},
+    {"name": "left_leg", "texture": "left_leg.png", "x": 25, "y": 25},
+    {"name": "right_leg", "texture": "right_leg.png", "x": 25, "y": 25}
+]
+}
+

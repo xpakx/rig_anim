@@ -8,7 +8,7 @@ from raylib import (
         Vector2,
         MOCHA_MANTLE, MOCHA_FLAMINGO, MOCHA_OVERLAY_0,
         MOCHA_TEXT,
-        KEY_A, KEY_B, KEY_C, KEY_1,
+        KEY_A, KEY_B, KEY_1,
 )
 
 init_window(800, 600, "Simplest Mesh")
@@ -89,9 +89,21 @@ while not window_should_close():
     if show_edges:
         for tri in triangles:
             v1, v2, v3 = [deformed_vertices[i] for i in tri]
-            draw_line(int(v1[0]), int(v1[1]), int(v2[0]), int(v2[1]), MOCHA_OVERLAY_0)
-            draw_line(int(v2[0]), int(v2[1]), int(v3[0]), int(v3[1]), MOCHA_OVERLAY_0)
-            draw_line(int(v3[0]), int(v3[1]), int(v1[0]), int(v1[1]), MOCHA_OVERLAY_0)
+            draw_line(
+                    int(v1[0]), int(v1[1]),
+                    int(v2[0]), int(v2[1]),
+                    MOCHA_OVERLAY_0
+            )
+            draw_line(
+                    int(v2[0]), int(v2[1]),
+                    int(v3[0]), int(v3[1]),
+                    MOCHA_OVERLAY_0
+            )
+            draw_line(
+                    int(v3[0]), int(v3[1]),
+                    int(v1[0]), int(v1[1]),
+                    MOCHA_OVERLAY_0
+            )
 
         for vx, vy in deformed_vertices:
             draw_circle(int(vx), int(vy), 5, MOCHA_OVERLAY_0)
@@ -102,7 +114,6 @@ while not window_should_close():
         show_edges = not show_edges
     if is_key_pressed(KEY_1):
         show_triangles = not show_triangles
-
 
     end_drawing()
 
