@@ -4,6 +4,7 @@ from raylib import (
 )
 import math
 from bones import bone_world_matrix
+from loader import RigModel
 
 
 def draw_slot_box(top_left, top_right, bottom_left, bottom_right):
@@ -132,7 +133,12 @@ def fit_vertices_box_weighted(
     return transformed_vertices
 
 
-def draw_attachments(rig_model, deform: bool = False):
+def draw_attachments(
+        rig_model: RigModel,
+        deform: bool = False,
+        draw_triangles: bool = False,
+        draw_box: bool = False,
+):
     for slot in rig_model.slots:
         if slot.get("attachment"):
             bone = rig_model.bones_dict.get(slot.get("bone"))
@@ -147,7 +153,8 @@ def draw_attachments(rig_model, deform: bool = False):
 
             top_left, top_right, bottom_left, bottom_right = get_slot_box(
                     bone, att, tex, rig_model)
-            draw_slot_box(top_left, top_right, bottom_left, bottom_right)
+            if draw_box:
+                draw_slot_box(top_left, top_right, bottom_left, bottom_right)
 
             if deform:
                 transformed_vertices = fit_vertices_box_weighted(
@@ -163,4 +170,5 @@ def draw_attachments(rig_model, deform: bool = False):
 
             draw_texture_mesh(
                     tex, att["triangles"], att["uvs"], transformed_vertices)
-            draw_mesh_triangles(transformed_vertices, att["triangles"])
+            if draw_triangles:
+                draw_mesh_triangles(transformed_vertices, att["triangles"])

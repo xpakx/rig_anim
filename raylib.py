@@ -108,6 +108,9 @@ raylib.rlSetTexture.restype = None
 raylib.rlColor4ub.argtypes = [ctypes.c_uint, ctypes.c_uint, ctypes.c_uint, ctypes.c_uint]
 raylib.rlColor4ub.restype = None
 
+raylib.rlDrawRenderBatchActive.argtypes = []
+raylib.rlDrawRenderBatchActive.restype = None
+
 # Constants from Raylib
 RL_TRIANGLES = 4
 
@@ -236,6 +239,10 @@ def rl_color_4ub(r: int, g: int, b: int, a: int) -> None:
     raylib.rlColor4ub(r, g, b, a)
 
 
+def rl_draw_render_batch_active():
+    raylib.rlDrawRenderBatchActive()
+
+
 def draw_texture_mesh(
         texture: Texture2D,
         triangles: list,
@@ -252,4 +259,5 @@ def draw_texture_mesh(
             rl_tex_coord_2f(u, v)
             rl_vertex_2f(x, y)
     rl_end()
+    rl_draw_render_batch_active()
     rl_set_texture(0)
