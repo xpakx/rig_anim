@@ -102,7 +102,37 @@ def fit_vertices(top_left, top_right, bottom_left, bottom_right, vertices):
     return transformed_vertices
 
 
-def draw_attachments(rig_model):
+def fit_vertices_box_weighted(
+        top_left, top_right, bottom_left, bottom_right,
+        vertices, weights, rig_model
+):
+    transformed_vertices = []
+
+    top_vec = (top_right[0] - top_left[0], top_right[1] - top_left[1])
+    left_vec = (bottom_left[0] - top_left[0], bottom_left[1] - top_left[1])
+
+    for i, (vx, vy) in enumerate(vertices):
+        local_x = vx * top_vec[0] + vy * left_vec[0] + top_left[0]
+        local_y = vx * top_vec[1] + vy * left_vec[1] + top_left[1]
+
+        offset_x, offset_y = 0, 0
+        for bone_name, weight in weights[i].items():
+            bone = rig_model.bones_dict[bone_name]
+            wm = bone_world_matrix(bone, rig_model)
+            a, b, c, d, tx, ty = wm
+            wx = a * vx + b * vy + tx
+            wy = c * vx + d * vy + ty
+            offset_x += (wx - local_x) * weight
+            offset_y += (wy - local_y) * weight
+
+        transformed_vertices.append(
+                [int(local_x + offset_x), int(local_y + offset_y)]
+        )
+
+    return transformed_vertices
+
+
+def draw_attachments(rig_model, deform: bool = False):
     for slot in rig_model.slots:
         if slot.get("attachment"):
             bone = rig_model.bones_dict.get(slot.get("bone"))
@@ -119,10 +149,17 @@ def draw_attachments(rig_model):
                     bone, att, tex, rig_model)
             draw_slot_box(top_left, top_right, bottom_left, bottom_right)
 
-            transformed_vertices = fit_vertices(
-                    top_left, top_right, bottom_left,
-                    bottom_right, att['vertices']
-            )
+            if deform:
+                transformed_vertices = fit_vertices_box_weighted(
+                        top_left, top_right, bottom_left,
+                        bottom_right, att['vertices'],
+                        att['weights'], rig_model
+                )
+            else:
+                transformed_vertices = fit_vertices(
+                        top_left, top_right, bottom_left,
+                        bottom_right, att['vertices']
+                )
 
             draw_texture_mesh(
                     tex, att["triangles"], att["uvs"], transformed_vertices)

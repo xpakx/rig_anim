@@ -4,7 +4,7 @@ from raylib import (
         close_window, unload_texture, is_key_pressed,
         draw_text,
         MOCHA_MANTLE, MOCHA_TEXT,
-        KEY_A, KEY_B,
+        KEY_A, KEY_B, KEY_1,
 )
 import math
 from loader import load_file, update_attachments
@@ -21,6 +21,7 @@ update_attachments(rig_model)
 angle = 0
 show_attachments = True
 show_bones = True
+deform = True
 
 while not window_should_close():
     begin_drawing()
@@ -36,7 +37,7 @@ while not window_should_close():
     rig_model.bones_dict["head"]["rotation"] = 0 + math.sin(-angle) * 20
     angle += 0.05
 
-    draw_attachments(rig_model)
+    draw_attachments(rig_model, deform)
 
     if show_bones:
         draw_bones(rig_model)
@@ -45,6 +46,8 @@ while not window_should_close():
         show_attachments = not show_attachments
     if is_key_pressed(KEY_B):
         show_bones = not show_bones
+    if is_key_pressed(KEY_1):
+        deform = not deform
 
     end_drawing()
 
