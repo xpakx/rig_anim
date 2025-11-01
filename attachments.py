@@ -37,9 +37,15 @@ def rotate_point(px, py, cx, cy, angle):
 def get_slot_box(bone, att, tex, rig_model):
     wm = bone_world_matrix(bone, rig_model)
     a, b, c, d, x, y = wm
+
+    local_att_x = att.get("x", 0) * att.get("scaleX", 1)
+    local_att_y = att.get("y", 0) * att.get("scaleY", 1)
+    x = a * local_att_x + b * local_att_y + x
+    y = c * local_att_x + d * local_att_y + y
+
     local_tip = (bone["length"]*att.get("scaleX", 1), 0)
-    x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + wm[4]
-    y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + wm[5]
+    x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + x
+    y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + y
 
     dx = x_tip - x
     dy = y_tip - y
