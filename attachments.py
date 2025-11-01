@@ -51,6 +51,7 @@ def get_slot_box(bone, att, tex, rig_model):
     dy = y_tip - y
 
     scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
+    scale_y = scale_y * att.get("scaleY", 1)
     width = tex.width * scale_y * att.get("scaleX", 1)
 
     length = math.hypot(dx, dy)
