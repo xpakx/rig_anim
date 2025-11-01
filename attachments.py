@@ -137,7 +137,7 @@ def draw_attachments(
         rig_model: RigModel,
         deform: bool = False,
         draw_triangles: bool = False,
-        draw_box: bool = False,
+        draw_boxes: bool = False,
 ):
     for slot in rig_model.slots:
         if slot.get("attachment"):
@@ -153,7 +153,7 @@ def draw_attachments(
 
             top_left, top_right, bottom_left, bottom_right = get_slot_box(
                     bone, att, tex, rig_model)
-            if draw_box:
+            if draw_boxes:
                 draw_slot_box(top_left, top_right, bottom_left, bottom_right)
 
             if deform:

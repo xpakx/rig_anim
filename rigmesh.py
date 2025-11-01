@@ -4,7 +4,7 @@ from raylib import (
         close_window, unload_texture, is_key_pressed,
         draw_text,
         MOCHA_MANTLE, MOCHA_TEXT,
-        KEY_A, KEY_B, KEY_1,
+        KEY_A, KEY_B, KEY_1, KEY_2, KEY_3,
 )
 import math
 from loader import load_file, update_attachments
@@ -21,6 +21,8 @@ update_attachments(rig_model)
 angle = 0
 show_attachments = True
 show_bones = True
+show_boxes = True
+show_triangles = True
 deform = True
 
 while not window_should_close():
@@ -38,7 +40,10 @@ while not window_should_close():
     angle += 0.05
 
     if show_attachments:
-        draw_attachments(rig_model, deform)
+        draw_attachments(
+                rig_model, deform=deform, draw_triangles=show_triangles,
+                draw_boxes=show_boxes
+        )
 
     if show_bones:
         draw_bones(rig_model)
@@ -49,6 +54,10 @@ while not window_should_close():
         show_bones = not show_bones
     if is_key_pressed(KEY_1):
         deform = not deform
+    if is_key_pressed(KEY_2):
+        show_triangles = not show_triangles
+    if is_key_pressed(KEY_3):
+        show_boxes = not show_boxes
 
     end_drawing()
 
