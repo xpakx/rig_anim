@@ -25,7 +25,7 @@
 			"length": 100,
 			"rotation": -45,
 			"x": -50,
-			"y": -46
+			"y": -43
 		},
 		{
 			"name": "right_arm",
@@ -33,21 +33,23 @@
 			"length": 100,
 			"rotation": 45,
 			"x": -50,
-			"y": 46
+			"y": 43
 		},
 		{
 			"name": "left_leg",
 			"parent": "root",
 			"length": 120,
 			"rotation": 120,
-			"x": -40
+			"x": -40,
+			"y": -20
 		},
 		{
 			"name": "right_leg",
 			"parent": "root",
 			"length": 120,
 			"rotation": 60,
-			"x": 40
+			"x": 40,
+			"y": -20
 		}
 	],
 
@@ -88,40 +90,34 @@
 		{
 			"name": "head",
 			"texture": "head.png",
-			"x": 70,
-			"y": 70,
 			"rotation": 180,
-			"scaleX": 1.45,
-			"scaleY": 1.25
+			"x": -20,
+			"scaleX": 1.45
 		},
 		{
 			"name": "torso",
 			"texture": "torso.png",
-			"x": 60,
-			"y": 110,
 			"rotation": 180
 		},
 		{
 			"name": "left_arm",
 			"texture": "left_arm.png",
-			"x": 25
+			"x": -10
 		},
 		{
 			"name": "right_arm",
 			"texture": "right_arm.png",
-			"x": 20
+			"x": -10
 		},
 		{
 			"name": "left_leg",
 			"texture": "left_leg.png",
-			"x": 25,
-			"y": 25
+			"x": -10
 		},
 		{
 			"name": "right_leg",
 			"texture": "right_leg.png",
-			"x": 25,
-			"y": 25
+			"x": -10
 		}
 	]
 }
