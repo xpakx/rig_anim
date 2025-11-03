@@ -41,11 +41,11 @@ show_bones = True
 
 def draw_attachments():
     for slot in slots:
-        if slot.get("attachment"):
-            bone = bones_dict.get(slot.get("bone"))
+        if slot.attachment:
+            bone = bones_dict.get(slot.bone)
             if not bone:
                 continue
-            att = att_dict.get(slot.get("attachment"))
+            att = att_dict.get(slot.attachment)
             if not att:
                 continue
             tex = att["texture"]
@@ -57,7 +57,7 @@ def draw_attachments():
             rot = math.degrees(math.atan2(c, a)) - 90
 
             scale_y = bone.length / tex.height if tex.height != 0 else 1
-            color = slot.get('color', RAYWHITE)
+            color = slot.color or RAYWHITE
 
             src = Rectangle(0, 0, tex.width, tex.height)
 

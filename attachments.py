@@ -147,13 +147,13 @@ def draw_attachments(
         draw_boxes: bool = False,
 ):
     for slot in rig_model.slots:
-        if slot.get("attachment"):
-            bone = rig_model.bones_dict.get(slot.get("bone"))
+        if slot.attachment:
+            bone = rig_model.bones_dict.get(slot.bone)
             if not bone:
                 continue
             if not bone.parent:
                 continue
-            att = rig_model.att_dict.get(slot.get("attachment"))
+            att = rig_model.att_dict.get(slot.attachment)
             if not att or not att.get("texture"):
                 continue
             tex = att["texture"]

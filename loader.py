@@ -15,12 +15,20 @@ class Bone:
     scale_y: int = 1
 
 
-# TODO: classes for slots, attachments
+@dataclass
+class Slot:
+    name: str = ""
+    bone: str = ""
+    attachment: str = ""
+    color: int | None = None
+
+
+# TODO: classes for attachments
 @dataclass
 class RigModel:
     bones: list[Bone] = field(default_factory=list)
     bones_dict: dict[str, Bone] = field(default_factory=dict)
-    slots: list = field(default_factory=list)
+    slots: list[Slot] = field(default_factory=list)
     attachments: list = field(default_factory=list)
     att_dict: dict = field(default_factory=dict)
 
@@ -44,7 +52,14 @@ def load_file(filename: str) -> RigModel:
         )
         model.bones.append(bone)
     model.bones_dict = {b.name: b for b in model.bones}
-    model.slots = data['slots']
+    for slot_data in data['slots']:
+        slot = Slot(
+                name=slot_data.get('name', ''),
+                bone=slot_data.get('bone', ''),
+                attachment=slot_data.get('attachment', ''),
+                color=slot_data.get('color', None),
+        )
+        model.slots.append(slot)
     model.attachments = data['attachments']
     model.att_dict = {a["name"]: a for a in model.attachments}
     return model
