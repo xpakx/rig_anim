@@ -6,11 +6,11 @@ from raylib import (
 
 
 def bone_local_matrix(bone):
-    rot = math.radians(bone.get("rotation", 0))
-    sx = bone.get("scaleX", 1)
-    sy = bone.get("scaleY", 1)
-    x = bone.get("x", 0)
-    y = bone.get("y", 0)
+    rot = math.radians(bone.rotation)
+    sx = bone.scale_x
+    sy = bone.scale_y
+    x = bone.x
+    y = bone.y
 
     cosr = math.cos(rot)
     sinr = math.sin(rot)
@@ -36,7 +36,7 @@ def mul_mat2d(a, b):
 
 
 def tip_offset_matrix(parent):
-    tip = parent.get("length", 0)
+    tip = parent.length
     return [
         1, 0,
         0, 1,
@@ -46,7 +46,7 @@ def tip_offset_matrix(parent):
 
 def bone_world_matrix(bone, rig_model):
     local = bone_local_matrix(bone)
-    parent_name = bone.get("parent")
+    parent_name = bone.parent
     if parent_name:
         parent = rig_model.bones_dict[parent_name]
         parent_world = bone_world_matrix(parent, rig_model)
@@ -58,10 +58,10 @@ def bone_world_matrix(bone, rig_model):
 
 def draw_bones(rig_model):
     for bone in rig_model.bones:
-        if bone.get("parent"):
+        if bone.parent:
             wm = bone_world_matrix(bone, rig_model)
             x, y = wm[4], wm[5]
-            local_tip = (bone["length"], 0)
+            local_tip = (bone.length, 0)
             x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + wm[4]
             y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + wm[5]
 

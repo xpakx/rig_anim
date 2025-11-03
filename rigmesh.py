@@ -30,13 +30,13 @@ while not window_should_close():
     clear_background(MOCHA_MANTLE)
     draw_text("Rig with meshes", 10, 10, 20, MOCHA_TEXT)
 
-    rig_model.bones_dict["left_arm"]["rotation"] = -105 + math.sin(angle) * 30
-    rig_model.bones_dict["right_arm"]["rotation"] = 105 - math.sin(angle) * 30
-    rig_model.bones_dict["left_leg"]["rotation"] = 100 - math.sin(angle) * 20
-    rig_model.bones_dict["right_leg"]["rotation"] = 80 + math.sin(angle) * 20
-    rig_model.bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
-    rig_model.bones_dict["root"]["x"] = 400 + math.sin(angle/2) * 50
-    rig_model.bones_dict["head"]["rotation"] = 0 + math.sin(-angle) * 20
+    rig_model.bones_dict["left_arm"].rotation = -105 + math.sin(angle) * 30
+    rig_model.bones_dict["right_arm"].rotation = 105 - math.sin(angle) * 30
+    rig_model.bones_dict["left_leg"].rotation = 100 - math.sin(angle) * 20
+    rig_model.bones_dict["right_leg"].rotation = 80 + math.sin(angle) * 20
+    rig_model.bones_dict["torso"].rotation = -90 + math.sin(angle) * 5
+    rig_model.bones_dict["root"].x = 400 + math.sin(angle/2) * 50
+    rig_model.bones_dict["head"].rotation = 0 + math.sin(-angle) * 20
     angle += 0.05
 
     if show_attachments:

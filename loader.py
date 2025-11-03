@@ -3,11 +3,23 @@ from dataclasses import dataclass, field
 from raylib import load_texture
 
 
-# TODO: classes fro bones, slots, attachments
+@dataclass
+class Bone:
+    name: str = ""
+    length: int = 0
+    rotation: int = 0
+    parent: str | None = None
+    x: int = 0
+    y: int = 0
+    scale_x: int = 1
+    scale_y: int = 1
+
+
+# TODO: classes for slots, attachments
 @dataclass
 class RigModel:
-    bones: list = field(default_factory=list)
-    bones_dict: dict = field(default_factory=dict)
+    bones: list[Bone] = field(default_factory=list)
+    bones_dict: dict[str, Bone] = field(default_factory=dict)
     slots: list = field(default_factory=list)
     attachments: list = field(default_factory=list)
     att_dict: dict = field(default_factory=dict)
@@ -19,8 +31,19 @@ def load_file(filename: str) -> RigModel:
     if not data:
         raise Exception("cannot load model")
     model = RigModel()
-    model.bones = data['bones']
-    model.bones_dict = {b["name"]: b for b in model.bones}
+    for bone_data in data['bones']:
+        bone = Bone(
+                name=bone_data.get('name', ''),
+                length=bone_data.get('length', 0),
+                rotation=bone_data.get('rotation', 0),
+                x=bone_data.get('x', 0),
+                y=bone_data.get('y', 0),
+                parent=bone_data.get('parent'),
+                scale_x=bone_data.get('scaleX', 1),
+                scale_y=bone_data.get('scaleY', 1),
+        )
+        model.bones.append(bone)
+    model.bones_dict = {b.name: b for b in model.bones}
     model.slots = data['slots']
     model.attachments = data['attachments']
     model.att_dict = {a["name"]: a for a in model.attachments}

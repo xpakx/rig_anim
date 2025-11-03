@@ -43,14 +43,14 @@ def get_slot_box(bone, att, tex, rig_model):
     x = a * local_att_x + b * local_att_y + x
     y = c * local_att_x + d * local_att_y + y
 
-    local_tip = (bone["length"]*att.get("scaleX", 1), 0)
+    local_tip = (bone.length*att.get("scaleX", 1), 0)
     x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + x
     y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + y
 
     dx = x_tip - x
     dy = y_tip - y
 
-    scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
+    scale_y = bone.length / tex.height if tex.height != 0 else 1
     scale_y = scale_y * att.get("scaleY", 1)
     width = tex.width * scale_y * att.get("scaleX", 1)
 
@@ -151,7 +151,7 @@ def draw_attachments(
             bone = rig_model.bones_dict.get(slot.get("bone"))
             if not bone:
                 continue
-            if not bone.get("parent"):
+            if not bone.parent:
                 continue
             att = rig_model.att_dict.get(slot.get("attachment"))
             if not att or not att.get("texture"):

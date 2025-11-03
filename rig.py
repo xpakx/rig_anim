@@ -56,7 +56,7 @@ def draw_attachments():
             a, b, c, d, x, y = wm
             rot = math.degrees(math.atan2(c, a)) - 90
 
-            scale_y = bone.get("length", 0) / tex.height if tex.height != 0 else 1
+            scale_y = bone.length / tex.height if tex.height != 0 else 1
             color = slot.get('color', RAYWHITE)
 
             src = Rectangle(0, 0, tex.width, tex.height)
@@ -81,13 +81,13 @@ while not window_should_close():
     clear_background(MOCHA_MANTLE)
     draw_text("Rig-based animation", 10, 10, 20, MOCHA_TEXT)
 
-    bones_dict["left_arm"]["rotation"] = -105 + math.sin(angle) * 30
-    bones_dict["right_arm"]["rotation"] = 105 - math.sin(angle) * 30
-    bones_dict["left_leg"]["rotation"] = 100 - math.sin(angle) * 20
-    bones_dict["right_leg"]["rotation"] = 80 + math.sin(angle) * 20
-    bones_dict["torso"]["rotation"] = -90 + math.sin(angle) * 5
-    bones_dict["root"]["x"] = 400 + math.sin(angle/2) * 50
-    bones_dict["head"]["rotation"] = 0 + math.sin(-angle) * 5
+    bones_dict["left_arm"].rotation = -105 + math.sin(angle) * 30
+    bones_dict["right_arm"].rotation = 105 - math.sin(angle) * 30
+    bones_dict["left_leg"].rotation = 100 - math.sin(angle) * 20
+    bones_dict["right_leg"].rotation = 80 + math.sin(angle) * 20
+    bones_dict["torso"].rotation = -90 + math.sin(angle) * 5
+    bones_dict["root"].x = 400 + math.sin(angle/2) * 50
+    bones_dict["head"].rotation = 0 + math.sin(-angle) * 5
     angle += 0.05
 
     if show_attachments:
