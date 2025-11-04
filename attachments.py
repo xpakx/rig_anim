@@ -3,7 +3,7 @@ from raylib import (
         MOCHA_OVERLAY_0,
 )
 import math
-from bones import bone_world_matrix
+from bones import bone_world_matrix, mul_mat2d, tip_offset_matrix
 from loader import RigModel
 
 
@@ -70,6 +70,67 @@ def get_slot_box(bone, att, tex, rig_model):
                 bottom_left[1] + bottom_right[1]) / 4
     angle = math.radians(att.rotation)
 
+    top_left = rotate_point(*top_left, center_x, center_y, angle)
+    top_right = rotate_point(*top_right, center_x, center_y, angle)
+    bottom_left = rotate_point(*bottom_left, center_x, center_y, angle)
+    bottom_right = rotate_point(*bottom_right, center_x, center_y, angle)
+
+    return top_left, top_right, bottom_left, bottom_right
+
+
+# TODO: this could be cached
+def att_transform_matrix(att):
+    cosr = math.cos(0)
+    sinr = math.sin(0)
+
+    return [
+        cosr*att.scale_x, -sinr*att.scale_y,
+        sinr*att.scale_x,  cosr*att.scale_y,
+        att.x*att.scale_x, att.y*att.scale_y
+        # TODO: not sure about multiplication for the last two,
+        # for now i have this for backward compatibility
+    ]
+
+
+def get_slot_box_mat(bone, att, tex, rig_model):
+    wm = bone_world_matrix(bone, rig_model)
+
+    # transform by attachment data x, y, and scale by
+    # attachment data, but not rotation
+    att_matrix = att_transform_matrix(att)
+    wm = mul_mat2d(wm, att_matrix)
+
+    # translate to bone center along the bone
+    tip_matrix = tip_offset_matrix(bone)
+    tip_matrix[4] = tip_matrix[4] * 0.5
+    wm_center = mul_mat2d(wm, tip_matrix)
+
+    scale_y = bone.length / tex.height if tex.height != 0 else 1
+    scale_y = scale_y * att.scale_y
+    width = tex.width * scale_y * att.scale_x
+
+    trans = [
+        0, 0,
+        0,  0,
+        bone.length/2, -width/2
+    ]
+    top_left_matrx = mul_mat2d(wm_center, trans)
+    trans[5] *= -1
+    top_right_matrx = mul_mat2d(wm_center, trans)
+    trans[4] *= -1
+    bottom_right_matrx = mul_mat2d(wm_center, trans)
+    trans[5] *= -1
+    bottom_left_matrx = mul_mat2d(wm_center, trans)
+
+    top_left = (top_left_matrx[4], top_left_matrx[5])
+    top_right = (top_right_matrx[4], top_right_matrx[5])
+    bottom_left = (bottom_left_matrx[4], bottom_left_matrx[5])
+    bottom_right = (bottom_right_matrx[4], bottom_right_matrx[5])
+
+    # texture rotation
+    angle = math.radians(att.rotation - 180)
+    center_x = wm_center[4]
+    center_y = wm_center[5]
     top_left = rotate_point(*top_left, center_x, center_y, angle)
     top_right = rotate_point(*top_right, center_x, center_y, angle)
     bottom_left = rotate_point(*bottom_left, center_x, center_y, angle)
@@ -158,7 +219,7 @@ def draw_attachments(
                 continue
             tex = att.texture
 
-            top_left, top_right, bottom_left, bottom_right = get_slot_box(
+            top_left, top_right, bottom_left, bottom_right = get_slot_box_mat(
                     bone, att, tex, rig_model)
             if draw_boxes:
                 draw_slot_box(top_left, top_right, bottom_left, bottom_right)
