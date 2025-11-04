@@ -92,11 +92,29 @@ def att_transform_matrix(att):
     ]
 
 
+# TODO: this could be cached
+def slot_box_corners_matrix(att, bone, width, height):
+    angle = math.radians(att.rotation)
+    sinr = math.sin(angle)
+    cosr = math.cos(angle)
+    rot = [
+        cosr, -sinr,
+        sinr, cosr,
+        0, 0
+    ]
+    trans = [
+        0, 0,
+        0,  0,
+        -height/2, width/2
+    ]
+    return mul_mat2d(rot, trans)
+
+
 def get_slot_box_mat(bone, att, tex, rig_model):
     wm = bone_world_matrix(bone, rig_model)
 
-    # transform by attachment data x, y, and scale by
-    # attachment data, but not rotation
+    # transform by attachment x, y, and scale by
+    # attachment data, but do not rotate
     att_matrix = att_transform_matrix(att)
     wm = mul_mat2d(wm, att_matrix)
 
@@ -108,33 +126,20 @@ def get_slot_box_mat(bone, att, tex, rig_model):
     scale_y = bone.length / tex.height if tex.height != 0 else 1
     scale_y = scale_y * att.scale_y
     width = tex.width * scale_y * att.scale_x
+    trans = slot_box_corners_matrix(att, bone, width, bone.length)
 
-    trans = [
-        0, 0,
-        0,  0,
-        bone.length/2, -width/2
-    ]
-    top_left_matrx = mul_mat2d(wm_center, trans)
+    top_left_matrix = mul_mat2d(wm_center, trans)
     trans[5] *= -1
-    top_right_matrx = mul_mat2d(wm_center, trans)
+    top_right_matrix = mul_mat2d(wm_center, trans)
     trans[4] *= -1
-    bottom_right_matrx = mul_mat2d(wm_center, trans)
+    bottom_right_matrix = mul_mat2d(wm_center, trans)
     trans[5] *= -1
-    bottom_left_matrx = mul_mat2d(wm_center, trans)
+    bottom_left_matrix = mul_mat2d(wm_center, trans)
 
-    top_left = (top_left_matrx[4], top_left_matrx[5])
-    top_right = (top_right_matrx[4], top_right_matrx[5])
-    bottom_left = (bottom_left_matrx[4], bottom_left_matrx[5])
-    bottom_right = (bottom_right_matrx[4], bottom_right_matrx[5])
-
-    # texture rotation
-    angle = math.radians(att.rotation - 180)
-    center_x = wm_center[4]
-    center_y = wm_center[5]
-    top_left = rotate_point(*top_left, center_x, center_y, angle)
-    top_right = rotate_point(*top_right, center_x, center_y, angle)
-    bottom_left = rotate_point(*bottom_left, center_x, center_y, angle)
-    bottom_right = rotate_point(*bottom_right, center_x, center_y, angle)
+    top_left = (top_left_matrix[4], top_left_matrix[5])
+    top_right = (top_right_matrix[4], top_right_matrix[5])
+    bottom_left = (bottom_left_matrix[4], bottom_left_matrix[5])
+    bottom_right = (bottom_right_matrix[4], bottom_right_matrix[5])
 
     return top_left, top_right, bottom_left, bottom_right
 
