@@ -62,7 +62,7 @@ while not window_should_close():
     end_drawing()
 
 for att in rig_model.att_dict.values():
-    tex = att.get("texture")
+    tex = att.texture
     if tex:
         unload_texture(tex)
 

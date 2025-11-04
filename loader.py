@@ -33,10 +33,10 @@ class Attachment:
     scale_x: int = 0
     scale_y: int = 0
     # TODO: only for mesh type
-    vertices: list = field(default_factory=list)
-    triangles: list = field(default_factory=list)
-    uvs: list = field(default_factory=list)
-    weights: list = field(default_factory=list)
+    vertices: list[list[int]] | None = None
+    triangles: list[list[int]] | None = None
+    uvs: list[list[int]] | None = None
+    weights: list | None = None
 
 
 # TODO: class for attachments
@@ -85,7 +85,20 @@ def load_file(filename: str) -> RigModel:
                 y=att_data.get('y', 0),
                 scale_x=att_data.get('scaleX', 1),
                 scale_y=att_data.get('scaleY', 1),
+                vertices=att_data.get('vertices'),
+                triangles=att_data.get('triangles'),
+                uvs=att_data.get('uvs'),
         )
+        if attachment.vertices:
+            weights = att_data.get('weights')
+            calc_weights = [{} for _ in attachment.vertices]
+            if weights:
+                for weight in weights:
+                    v = weight.get('vert')
+                    b = weight.get('bone')
+                    w = weight.get('weight')
+                    calc_weights[v][b] = w
+            attachment.weights = calc_weights
         model.attachments.append(attachment)
     model.att_dict = {a.name: a for a in model.attachments}
     return model
@@ -96,18 +109,5 @@ def update_attachments(rig_model: RigModel):
         att = rig_model.att_dict[key]
         try:
             att.texture = load_texture(f"files/{att.texture}")
-            vertices = [[0, 0], [1, 0], [1, 1], [0, 1]]
-            triangles = [(0, 2, 1), (0, 3, 2)]
-            uvs = [[0, 0], [1, 0], [1, 1], [0, 1]]
-            bone_name = att.name
-            weights = [{} for _ in vertices]
-            if bone_name == "head":
-                weights[2]['right_arm'] = 0.7
-                weights[3]['left_arm'] = 0.7
-
-            att.vertices = vertices
-            att.triangles = triangles
-            att.uvs = uvs
-            att.weights = weights
         except Exception:
             att.texture = None

@@ -10,7 +10,7 @@ from raylib import (
         KEY_A, KEY_B
 )
 import math
-from loader import load_file
+from loader import load_file, update_attachments
 from bones import bone_world_matrix, draw_bones
 
 
@@ -26,12 +26,7 @@ slots = rig_model.slots
 attachments = rig_model.attachments
 att_dict = rig_model.att_dict
 
-for key in att_dict:
-    att = att_dict[key]
-    try:
-        att.texture = load_texture(f"files/{att.texture}")
-    except Exception:
-        att.texture = None
+update_attachments(rig_model)
 
 
 angle = 0

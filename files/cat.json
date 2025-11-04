@@ -92,32 +92,54 @@
 			"texture": "head.png",
 			"rotation": 180,
 			"x": -20,
-			"scaleX": 1.45
+			"scaleX": 1.45,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"weights": [
+				{"vert": 2, "bone": "right_arm", "weight": 0.7},
+				{"vert": 3, "bone": "left_arm", "weight": 0.7}
+			]
 		},
 		{
 			"name": "torso",
 			"texture": "torso.png",
-			"rotation": 180
+			"rotation": 180,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]]
 		},
 		{
 			"name": "left_arm",
 			"texture": "left_arm.png",
-			"x": -10
+			"x": -10,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]]
 		},
 		{
 			"name": "right_arm",
 			"texture": "right_arm.png",
-			"x": -10
+			"x": -10,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]]
 		},
 		{
 			"name": "left_leg",
 			"texture": "left_leg.png",
-			"x": -10
+			"x": -10,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]]
 		},
 		{
 			"name": "right_leg",
 			"texture": "right_leg.png",
-			"x": -10
+			"x": -10,
+			"vertices": [[0, 0], [1, 0], [1, 1], [0, 1]],
+			"triangles": [[0, 2, 1], [0, 3, 2]],
+			"uvs": [[0, 0], [1, 0], [1, 1], [0, 1]]
 		}
 	]
 }
