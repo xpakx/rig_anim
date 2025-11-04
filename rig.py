@@ -29,9 +29,9 @@ att_dict = rig_model.att_dict
 for key in att_dict:
     att = att_dict[key]
     try:
-        att["texture"] = load_texture(f"files/{att['texture']}")
+        att.texture = load_texture(f"files/{att.texture}")
     except Exception:
-        att["texture"] = None
+        att.texture = None
 
 
 angle = 0
@@ -48,7 +48,7 @@ def draw_attachments():
             att = att_dict.get(slot.attachment)
             if not att:
                 continue
-            tex = att["texture"]
+            tex = att.texture
             if not tex:
                 continue
 
@@ -63,15 +63,15 @@ def draw_attachments():
 
             dest = Rectangle(
                 x, y,
-                tex.width * scale_y * att.get("scaleX", 1),
-                tex.height * scale_y * att.get("scaleY", 1)
+                tex.width * scale_y * att.scale_x,
+                tex.height * scale_y * att.scale_y
             )
 
             origin = Vector2(
-                att.get('x', 0),
-                att.get('y', 0)
+                att.x,
+                att.y
             )
-            att_rot = att.get('rotation', 0)
+            att_rot = att.rotation
 
             draw_texture_pro(tex, src, dest, origin, rot + att_rot, color)
 
@@ -104,7 +104,7 @@ while not window_should_close():
     end_drawing()
 
 for att in att_dict.values():
-    tex = att.get("texture")
+    tex = att.texture
     if tex:
         unload_texture(tex)
 

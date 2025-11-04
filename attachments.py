@@ -38,12 +38,12 @@ def get_slot_box(bone, att, tex, rig_model):
     wm = bone_world_matrix(bone, rig_model)
     a, b, c, d, x, y = wm
 
-    local_att_x = att.get("x", 0) * att.get("scaleX", 1)
-    local_att_y = att.get("y", 0) * att.get("scaleY", 1)
+    local_att_x = att.x * att.scale_x
+    local_att_y = att.y * att.scale_y
     x = a * local_att_x + b * local_att_y + x
     y = c * local_att_x + d * local_att_y + y
 
-    local_tip = (bone.length*att.get("scaleX", 1), 0)
+    local_tip = (bone.length*att.scale_x, 0)
     x_tip = wm[0] * local_tip[0] + wm[1] * local_tip[1] + x
     y_tip = wm[2] * local_tip[0] + wm[3] * local_tip[1] + y
 
@@ -51,8 +51,8 @@ def get_slot_box(bone, att, tex, rig_model):
     dy = y_tip - y
 
     scale_y = bone.length / tex.height if tex.height != 0 else 1
-    scale_y = scale_y * att.get("scaleY", 1)
-    width = tex.width * scale_y * att.get("scaleX", 1)
+    scale_y = scale_y * att.scale_y
+    width = tex.width * scale_y * att.scale_x
 
     length = math.hypot(dx, dy)
 
@@ -68,7 +68,7 @@ def get_slot_box(bone, att, tex, rig_model):
                 bottom_left[0] + bottom_right[0]) / 4
     center_y = (top_left[1] + top_right[1] +
                 bottom_left[1] + bottom_right[1]) / 4
-    angle = math.radians(att.get("rotation", 0))
+    angle = math.radians(att.rotation)
 
     top_left = rotate_point(*top_left, center_x, center_y, angle)
     top_right = rotate_point(*top_right, center_x, center_y, angle)
@@ -154,9 +154,9 @@ def draw_attachments(
             if not bone.parent:
                 continue
             att = rig_model.att_dict.get(slot.attachment)
-            if not att or not att.get("texture"):
+            if not att or not att.texture:
                 continue
-            tex = att["texture"]
+            tex = att.texture
 
             top_left, top_right, bottom_left, bottom_right = get_slot_box(
                     bone, att, tex, rig_model)
@@ -166,16 +166,16 @@ def draw_attachments(
             if deform:
                 transformed_vertices = fit_vertices_box_weighted(
                         top_left, top_right, bottom_left,
-                        bottom_right, att['vertices'],
-                        att['weights'], rig_model
+                        bottom_right, att.vertices,
+                        att.weights, rig_model
                 )
             else:
                 transformed_vertices = fit_vertices(
                         top_left, top_right, bottom_left,
-                        bottom_right, att['vertices']
+                        bottom_right, att.vertices
                 )
 
             draw_texture_mesh(
-                    tex, att["triangles"], att["uvs"], transformed_vertices)
+                    tex, att.triangles, att.uvs, transformed_vertices)
             if draw_triangles:
-                draw_mesh_triangles(transformed_vertices, att["triangles"])
+                draw_mesh_triangles(transformed_vertices, att.triangles)
