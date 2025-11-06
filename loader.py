@@ -69,11 +69,14 @@ def load_file(filename: str) -> RigModel:
         model.bones.append(bone)
     model.bones_dict = {b.name: b for b in model.bones}
     for slot_data in data['slots']:
+        color = slot_data.get('color', None)
+        if color is not None:
+            color = parse_color(color)
         slot = Slot(
                 name=slot_data.get('name', ''),
                 bone=slot_data.get('bone', ''),
                 attachment=slot_data.get('attachment', ''),
-                color=slot_data.get('color', None),
+                color=color,
         )
         model.slots.append(slot)
     for att_data in data['attachments']:
@@ -111,3 +114,39 @@ def update_attachments(rig_model: RigModel):
             att.texture = load_texture(f"files/{att.texture}")
         except Exception:
             att.texture = None
+
+
+def parse_color(color: str | tuple[int]) -> int:
+    if type(color) is str:
+        return _parse_color_str(color)
+    else:
+        return _parse_color_tuple(color)
+
+
+def _parse_color_str(hexstr: str) -> int:
+    hexstr = hexstr.lstrip("#")
+
+    if len(hexstr) == 3:
+        hexstr = "".join(c * 2 for c in hexstr)
+
+    if len(hexstr) == 6:
+        hexstr += "ff"
+
+    r = int(hexstr[0:2], 16)
+    g = int(hexstr[2:4], 16)
+    b = int(hexstr[4:6], 16)
+    a = int(hexstr[6:8], 16)
+
+    return (a << 24) | (b << 16) | (g << 8) | r
+
+
+def _parse_color_tuple(color: tuple[int]) -> int:
+    r = color[0]
+    g = color[1]
+    b = color[2]
+    if len(color) == 3:
+        a = 255
+    else:
+        a = color[4]
+
+    return (a << 24) | (b << 16) | (g << 8) | r

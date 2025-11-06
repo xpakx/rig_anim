@@ -62,7 +62,8 @@
 		{
 			"name": "lleg_slot",
 			"bone": "left_leg",
-			"attachment": "left_leg"
+			"attachment": "left_leg",
+			"color": "#ff5555"
 		},
 		{
 			"name": "rleg_slot",

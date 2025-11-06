@@ -242,6 +242,7 @@ def draw_attachments(
                 )
 
             draw_texture_mesh(
-                    tex, att.triangles, att.uvs, transformed_vertices)
+                    tex, att.triangles, att.uvs, transformed_vertices,
+                    slot.color)
             if draw_triangles:
                 draw_mesh_triangles(transformed_vertices, att.triangles)

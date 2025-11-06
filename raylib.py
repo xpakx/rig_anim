@@ -247,11 +247,19 @@ def draw_texture_mesh(
         texture: Texture2D,
         triangles: list,
         norm_vertices_src: list,
-        vertices_dest: list
+        vertices_dest: list,
+        color: int | None = None,
 ) -> None:
     rl_begin(RL_TRIANGLES)
     rl_set_texture(texture.id)
-    rl_color_4ub(255, 255, 255, 255)
+    if color is None:
+        rl_color_4ub(255, 255, 255, 255)
+    else:
+        a = (color >> 24) & 0xFF
+        g = (color >> 16) & 0xFF
+        b = (color >> 8) & 0xFF
+        r = color & 0xFF
+        rl_color_4ub(r, g, b, a)
     for tri in triangles:
         for i in tri:
             x, y = vertices_dest[i]
